@@ -1,0 +1,20 @@
+int val;
+#define pin_soil 9
+#define pin_pomp 10
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pin_soil,INPUT);
+  pinMode(pin_pomp,OUTPUT);
+}
+
+void loop() {
+  val = digitalRead(pin_soil);
+   if(val != LOW)
+  { 
+    digitalWrite(pin_pomp,LOW);
+  }else{
+   digitalWrite(pin_pomp, HIGH); 
+  }
+  delay(100);
+}
