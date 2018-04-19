@@ -66,7 +66,7 @@ else if(e<z && d<z && c<z && b<z && a>z )
   lcd.print("Tank is 20% FULL");
 }
 
-else if(d<z && c<z && b<z && a<z )
+else if(e<z && d<z && c<z && b<z && a<z )
 {
   digitalWrite(pin_motor,LOW);
   lcd.setCursor(0,0);
