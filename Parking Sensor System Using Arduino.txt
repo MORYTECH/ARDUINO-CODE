@@ -1,0 +1,98 @@
+/* Pin Mapping for Kingbright Common Cathode 5x7 LED Matrix 
+  LED Matrix    Arduino(x = not connected)    Designator
+      1            6                           Row4     
+      2            8                           Row6
+      3           12                           Column1
+      4           11                           Column2
+      5            x  
+      6            9                           Column4
+      7            7                           Row5
+      8            4                           Row2
+      9            2                           Row0
+     10           10                           Column3
+     11            x  
+     12            5                           Row3
+     13           13                           Column0
+     14            3                           Row1
+     
+    Arduino pin2~pin8 = row0~row6, so rowX +2 = pin number
+    Arduino pin13~pin9 = column0~column4, 13 - columnY = pin number    
+*/
+
+// defines variables
+const int trigPin = A0;
+const int echoPin = A1;
+const int buzzer  = A2;
+long duration,cm;
+int  distance;
+int  nb_rows = 0;
+int  d_distance;
+long d_cm;
+int  max_stop = 100;
+
+// Distance
+int myDistance[8]={70,60,50,40,30,20,10,0};
+
+// LED Matrix 5x7
+const byte COLS = 5; // 5 Columns
+const byte ROWS = 7; // 7 Rows
+
+long microsecondsToCentimeters(long microseconds){
+  return microseconds / 29 / 2;
+}
+void clearLEDs() {
+  for (int r = 0; r < ROWS; r++) {
+    digitalWrite( r + 2, LOW);
+  }   
+  for (int c = 0; c < COLS; c++) {
+      digitalWrite( 13 - c, LOW);  
+  }
+}  
+void LightLEDs(int t) {
+  for (int r = 0; r < t; r++) {
+    digitalWrite( r + 2, HIGH);
+  }   
+}  
+void setup() {
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  pinMode(buzzer, OUTPUT);
+  for (int i = 2; i <= 13; i++) {
+    pinMode(i, OUTPUT);
+  }
+  Serial.begin(9600); // Starts the serial communication
+}
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  cm       = microsecondsToCentimeters(duration);
+  clearLEDs();
+  digitalWrite(buzzer, LOW); 
+
+  if (d_cm!=cm ||( nb_rows<=6 && d_distance<max_stop)){
+  if(d_cm!=cm) d_distance=0; 
+
+  for (int i = 0; i < 7; i = i + 1) {
+    if (cm <= myDistance[i] && cm >myDistance[i+1]){
+      nb_rows=i;
+      LightLEDs(i+1);
+      if(i==6){
+        d_cm=cm;
+        d_distance++;
+        digitalWrite(buzzer, HIGH);
+      }else{
+        d_distance=0;
+        digitalWrite(buzzer, LOW); 
+      }
+    }
+  }
+  if( nb_rows==0){
+    clearLEDs();
+    }
+  }
+ delay(10); 
+}
