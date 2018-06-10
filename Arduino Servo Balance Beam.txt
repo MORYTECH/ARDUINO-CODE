@@ -1,0 +1,18 @@
+
+#include<Servo.h>
+
+const int servoPin = A0;  
+Servo myServo;         // Initialize Servo.
+
+void setup() {
+Serial.begin(9600);   // Starts the serial communication
+myServo.attach(servoPin);   // Attach Servo 
+}
+
+void loop()
+{
+ myServo.write(150);
+ delay(500);
+ myServo.write(0);
+ delay(500); 
+}
