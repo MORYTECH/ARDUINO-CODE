@@ -1,0 +1,176 @@
+
+#include <Servo.h>          //Servo motor library. This is standard library
+#include <NewPing.h>        //Ultrasonic sensor function library. You must install this library
+
+//Our L298N control pins
+const int Left_MotorForward = 7;
+const int Left_MotorBackward = 6;
+const int Right_MotorForward = 4;
+const int Right_MotorBackward = 5;
+
+//Sensor pins
+#define trig_pin A2 //Analog input 1
+#define echo_pin A1 //Analog input 2
+
+#define distance_maximum 200
+int     distance = 100;
+boolean is_Forward = false;
+
+NewPing sonar(trig_pin, echo_pin, distance_maximum); //Sensor function
+Servo servo_motor; //Our servo name
+
+void setup(){
+
+  pinMode(Right_MotorForward, OUTPUT);
+  pinMode(Left_MotorForward, OUTPUT);
+  pinMode(Left_MotorBackward, OUTPUT);
+  pinMode(Right_MotorBackward, OUTPUT);
+  Serial.begin(9600);
+  servo_motor.attach(8); //Our servo pin
+
+  servo_motor.write(95);
+  delay(2000);
+  distance = read_Ping();
+  delay(100);
+  distance = read_Ping();
+  delay(100);
+  distance = read_Ping();
+  delay(100);
+  distance = read_Ping();
+  delay(100);
+  
+}
+
+void loop(){
+  
+  int distance_Right = 0;
+  int distance_Left = 0;
+  delay(50);
+
+  if (distance <= 20){
+    move_Stop();
+    delay(300);
+    move_Backward();
+    delay(400);
+    move_Stop();
+    delay(300);
+    distance_Right = look_Right();
+    delay(300);
+    distance_Left = look_Left();
+    delay(300);
+
+    if (distance >= distance_Left){
+      turn_Right();
+      move_Stop();
+    }
+    else{
+      turn_Left();
+      move_Stop();
+    }
+  }
+  else{
+    move_Forward(); 
+  }
+    distance = read_Ping();
+}
+
+int look_Right(){  
+  servo_motor.write(20);
+  delay(500);
+  int distance = read_Ping();
+  delay(100);
+  servo_motor.write(95);
+  return distance;
+}
+
+int look_Left(){
+  servo_motor.write(170);
+  delay(500);
+  int distance = read_Ping();
+  delay(100);
+  servo_motor.write(95);
+  return distance;
+  delay(100);
+}
+
+int read_Ping(){
+  delay(70);
+  int cm = sonar.ping_cm();
+  Serial.print("Ping: ");
+  Serial.print(cm); // Send ping, get distance in cm and print result 
+  Serial.println("cm");
+  if (cm==0){
+    cm=250;
+  }
+  return cm;
+}
+
+void move_Stop(){
+  Serial.println("STOP");
+  digitalWrite(Right_MotorForward, LOW);
+  digitalWrite(Left_MotorForward, LOW);
+  digitalWrite(Right_MotorBackward, LOW);
+  digitalWrite(Left_MotorBackward, LOW);
+}
+
+void move_Forward(){
+  Serial.println("Forward");
+  if(!is_Forward){
+
+    is_Forward=true;
+    
+    digitalWrite(Left_MotorForward, HIGH);
+    digitalWrite(Right_MotorForward, HIGH);
+  
+    digitalWrite(Left_MotorBackward, LOW);
+    digitalWrite(Right_MotorBackward, LOW); 
+  }
+}
+
+void move_Backward(){
+  Serial.println("Back");
+  is_Forward=false;
+
+  digitalWrite(Left_MotorBackward, HIGH);
+  digitalWrite(Right_MotorBackward, HIGH);
+  
+  digitalWrite(Left_MotorForward, LOW);
+  digitalWrite(Right_MotorForward, LOW);
+  
+}
+
+void turn_Right(){
+  Serial.println("TurnRight");
+  digitalWrite(Left_MotorForward, HIGH);
+  digitalWrite(Right_MotorBackward, HIGH);
+  
+  digitalWrite(Left_MotorBackward, LOW);
+  digitalWrite(Right_MotorForward, LOW);
+  
+  delay(500);
+  
+  digitalWrite(Left_MotorForward, HIGH);
+  digitalWrite(Right_MotorForward, HIGH);
+  
+  digitalWrite(Left_MotorBackward, LOW);
+  digitalWrite(Right_MotorBackward, LOW);
+ 
+}
+
+void turn_Left(){
+  Serial.println("TurnLeft");
+  digitalWrite(Left_MotorBackward, HIGH);
+  digitalWrite(Right_MotorForward, HIGH);
+  
+  digitalWrite(Left_MotorForward, LOW);
+  digitalWrite(Right_MotorBackward, LOW);
+
+  delay(500);
+  
+  digitalWrite(Left_MotorForward, HIGH);
+  digitalWrite(Right_MotorForward, HIGH);
+  
+  digitalWrite(Left_MotorBackward, LOW);
+  digitalWrite(Right_MotorBackward, LOW);
+}
+
