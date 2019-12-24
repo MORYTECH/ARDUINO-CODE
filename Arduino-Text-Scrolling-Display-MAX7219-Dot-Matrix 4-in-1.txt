@@ -1,5 +1,5 @@
 //MORY ARDUINO AND TECH
-//Audio Player using Arduino with micro SD card 
+//MAX7219 LED | Arduino Text Scrolling Display | Dot Matrix 4-in-1
 
 // Use the Parola library to scroll text on the display
 //
