@@ -1,0 +1,60 @@
+//MORY ARDUINO AND TECH
+//How to Set Up the DHT11 Humidity and Temperature Sensor with Arduino 
+
+// REQUIRES the following Arduino libraries:
+// - DHT Sensor Library: https://github.com/adafruit/DHT-sensor-library
+// - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
+
+#include "DHT.h"
+#include "U8glib.h"
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);
+#define DHTPIN A0     // Digital pin connected to the DHT sensor
+
+// Uncomment whatever type you're using!
+#define DHTTYPE DHT11   // DHT 11
+//#define DHTTYPE DHT22 // DHT 22
+
+char str[10];
+
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println(F("Hello Mory !"));
+
+  dht.begin();
+  u8g.firstPage();  
+}
+
+void loop() {
+  // Wait a few seconds between measurements.
+  delay(2000);
+
+  // Reading temperature or humidity takes about 250 milliseconds!
+  float h = dht.readHumidity();
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t) ) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  }
+
+  u8g.firstPage();  
+  do {
+    u8g.setFont(u8g_font_helvB08);
+    u8g.drawStr( 0, 15, "MORY ARDUINO & TECH");
+
+    
+    u8g.drawStr( 0, 30, "Humidity:");
+    u8g.drawStr( 80, 30, dtostrf(h, 5, 2, str));
+    u8g.drawStr( 110, 30, "%");
+    
+    u8g.drawStr( 0, 50, "Temperature:");
+    u8g.drawStr( 80, 50, dtostrf(t, 5, 2, str));
+    u8g.drawStr( 110, 50, "\260C");
+       
+  } while( u8g.nextPage() );
+
+}
