@@ -1,0 +1,32 @@
+//MORY ARDUINO AND TECH
+//How to use Sensor (HC-SR501) with Arduino
+
+
+//define the pins
+int Relay  = 10;
+int PIR    = 9;
+int Buzzer = 8;
+
+void setup() {
+  Serial.begin(9600);
+  //define the LED and Buzzer pin as output
+  pinMode(Relay, OUTPUT);
+  pinMode(Buzzer, OUTPUT);
+  //define the sensor pin as input
+  pinMode(PIR, INPUT);
+}
+
+void loop() {
+  //using the digitalRead function we will read the signal of the sensor
+  int value = digitalRead(PIR);
+  //if its high or if an any object is detected it will activate the LED and Buzzer
+  Serial.println(value);
+  if (value == HIGH){
+    digitalWrite(Relay, LOW);
+    digitalWrite(Buzzer, HIGH);
+  }
+  else {
+    digitalWrite(Relay, HIGH);
+    digitalWrite(Buzzer, LOW);
+  }
+}
