@@ -1,0 +1,29 @@
+//MORY ARDUINO AND TECH
+//Control Light with a Clap Using Arduino And Sound Sensor
+
+
+//define the pins
+int soundSensor=5;
+int LED=3;
+boolean LEDStatus=false;
+
+void setup() {
+ pinMode(soundSensor,INPUT);
+ pinMode(LED,OUTPUT);
+}
+
+void loop() {
+  int SensorData=digitalRead(soundSensor); 
+  if(SensorData==1){
+
+    if(LEDStatus==false){
+        LEDStatus=true;
+        digitalWrite(LED,HIGH);
+    }
+    else{
+        LEDStatus=false;
+        digitalWrite(LED,LOW);
+    }
+  }
+ } 
+ 
