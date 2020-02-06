@@ -1,0 +1,35 @@
+//MORY ARDUINO AND TECH
+//Arduino Flame Sensor
+
+
+const int buzzerPin = 2;
+const int flamePin = 8;
+int Flame = HIGH;
+int greenled = 3;
+int redled = 4;
+void setup() 
+{
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(redled, OUTPUT);
+  pinMode(greenled, OUTPUT);
+
+  pinMode(flamePin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() 
+{
+  Flame = digitalRead(flamePin);
+  if (Flame== LOW)
+  {
+    digitalWrite(buzzerPin, LOW);
+    digitalWrite(redled, HIGH);
+    digitalWrite(greenled, LOW);
+  }
+  else
+  {
+    digitalWrite(buzzerPin, HIGH);
+    digitalWrite(greenled, HIGH);
+    digitalWrite(redled, LOW);
+  }
+}
