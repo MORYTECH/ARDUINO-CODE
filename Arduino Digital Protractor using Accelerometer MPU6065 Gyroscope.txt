@@ -1,0 +1,75 @@
+//MORY ARDUINO AND TECH
+//Arduino Digital Protractor using Accelerometer MPU6065 Gyroscope
+
+#include "Servo.h"                 //Include Servo Motor library for using Servo 
+#include "Wire.h"                  //Include WIre library for using I2C 
+#include "U8glib.h"                //Include U8glib library for OLED 
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);
+
+const int MPU_addr=0x68;         //I2C MPU6050 Address
+Servo myservo;                  //myservo object for class servo 
+
+int16_t axis_X,axis_Y,axis_Z;    
+
+int minVal=260;
+int maxVal=400;
+
+double x;
+double y;
+double z;
+
+int pos = 0;  
+
+char str[10];
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println(F("Hello Mory !"));
+  
+  Wire.begin();                        //Begins I2C communication
+  Wire.beginTransmission(MPU_addr);    //Begins Transmission with MPU6050
+  Wire.write(0x6B);                    //Puts MPU6050 in Sleep Mode
+  Wire.write(0);                       //Puts MPU6050 in power mode 
+  Wire.endTransmission(true);          //Ends Trasmission
+  
+  myservo.attach(8);               //Servo PWM pin as 9 in UNO
+  u8g.firstPage();  
+   
+}
+
+void loop()
+{
+  Wire.beginTransmission(MPU_addr); //Begins I2C transmission 
+  Wire.write(0x3B);                 //Start with register 0x3B (ACCEL_XOUT_H)             
+  Wire.endTransmission(false);
+  Wire.requestFrom(MPU_addr,14,true); //Request 14 Registers from MPU6050
+  
+  axis_X=Wire.read()<<8|Wire.read(); //Obtain 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L) 
+  axis_Y=Wire.read()<<8|Wire.read(); //0x3B (ACCEL_YOUT_H) & 0x3C (ACCEL_YOUT_L)
+  axis_Z=Wire.read()<<8|Wire.read(); //0x3B (ACCEL_ZOUT_H) & 0x3C (ACCEL_ZOUT_L)
+    
+  int xAng = map(axis_X,minVal,maxVal,-90,90); 
+  int yAng = map(axis_Y,minVal,maxVal,-90,90);
+  int zAng = map(axis_Z,minVal,maxVal,-90,90);
+
+  x= RAD_TO_DEG * (atan2(-yAng, -zAng)+PI);     //Formula to calculate x values in degree
+  if (x<3 or x==225) x=0; 
+  int pos = map(x,0,180,0,180); // As X value is from 0 to 360 deg
+  myservo.write(pos);           // Write angle obtained 0 to 180 to servo
+  Serial.println("Angle : ");
+  Serial.println(x);
+  u8g.firstPage();  
+  do {
+    u8g.setFont(u8g_font_helvB08);
+    u8g.drawStr( 0, 15, "MORY ARDUINO & TECH");
+    
+    u8g.drawStr( 0, 40, "Angle:");
+    u8g.drawStr( 80, 40, dtostrf(x, 5, 2, str));    
+       
+  } while( u8g.nextPage() );
+  
+  delay(500);  
+       
+}
+
