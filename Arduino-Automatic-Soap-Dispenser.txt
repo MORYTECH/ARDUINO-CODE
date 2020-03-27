@@ -1,0 +1,36 @@
+//MORY ARDUINO AND TECH
+//Automatic Soap dispenser Using Arduino | Coronavirus (COVID-19)
+
+#include "Servo.h"   //Include Servo Motor library for using Servo
+Servo myServo1;
+Servo myServo2;
+#define in A0
+int servo1 = A1; //Digital PWM pin used by the servo 1
+int servo2 = A2; //Digital PWM pin used by the servo 2
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("Hello Mory !");
+  myServo1.attach(servo1);
+  myServo2.attach(servo2);
+  pinMode(in, INPUT);
+}
+void loop()
+{  
+  if(digitalRead(in)){
+    
+  Serial.println("Active");  
+  myServo1.write(110);
+  myServo2.write(0);
+  delay(300); 
+    
+  }else{
+    
+  Serial.println("Inactive");  
+  myServo1.write(0);
+  myServo2.write(110);
+  
+  }
+  delay(5);  
+}
