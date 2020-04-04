@@ -1,0 +1,29 @@
+//MORY ARDUINO AND TECH
+//Automatic Water dispenser Using Arduino | Wash hands and stay safe | Coronavirus (COVID-19)
+
+#define Sensor  A0
+#define Relay  A1
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("Hello Mory !");
+  pinMode(Sensor, INPUT);
+  pinMode(Relay, OUTPUT);
+}
+void loop()
+{  
+  if(!digitalRead(Sensor)){
+    
+  Serial.println("Active");  
+  digitalWrite(Relay,LOW);
+  delay(300); 
+    
+  }else{
+    
+  Serial.println("Inactive");  
+  digitalWrite(Relay,HIGH);
+  
+  }
+  delay(5);  
+}
