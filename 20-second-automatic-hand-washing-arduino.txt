@@ -1,0 +1,49 @@
+//MORY ARDUINO AND TECH
+//20 Second Automatic Hand-washing Timer Using Arduino | Wash hands and stay safe | Coronavirus (COVID-19)
+
+#include "U8glib.h"                //Include U8glib library for OLED 
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE|U8G_I2C_OPT_DEV_0);
+
+#define Sensor  A0
+
+void drawTXT(const char* what) {
+  u8g.firstPage(); 
+  do {
+    u8g.setFont(u8g_font_osb35);
+    u8g.drawStr( 0, 50, what);
+  } while( u8g.nextPage() );
+  delay(2000);
+
+}
+void draw20sec() {
+  int x = 0;
+  char buf[5];
+  for (x=1; x<=20; x++) {
+  u8g.firstPage(); 
+  do {
+    draw(itoa(x, buf, 10));
+  } while( u8g.nextPage() );
+  delay(1000);
+  }
+ delay(4000); 
+  
+}
+
+void draw(const char* what) {
+  u8g.setFont(u8g_font_osb35);
+  u8g.drawStr( 40, 50, what);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial.println("Hello Mory !");
+  pinMode(Sensor, INPUT);
+}
+void loop()
+{ 
+  if(!digitalRead(Sensor)){
+    drawTXT("SOAP");
+    draw20sec();
+  } 
+}
