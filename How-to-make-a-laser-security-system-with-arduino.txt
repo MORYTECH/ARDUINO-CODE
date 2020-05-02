@@ -1,0 +1,35 @@
+//MORY ARDUINO AND TECH
+//How to make a laser security system with Arduino
+
+
+
+#define LightSensor A1    // Light Sensor
+#define RedLED 7          // LED Pin
+#define Buzzer 6          // Buzzer Pin
+#define LaserPin A0       // Laser Pin
+
+void setup() {
+Serial.begin(9600);
+pinMode(A0,OUTPUT); 
+pinMode(Buzzer,OUTPUT); 
+pinMode(RedLED,OUTPUT); 
+pinMode(LightSensor,INPUT); 
+Serial.println("Begin");
+}
+
+void loop() {
+  int i=0;
+  digitalWrite(LaserPin,HIGH);
+  boolean val = digitalRead(LightSensor);
+  Serial.println(val);
+  if(digitalRead(LightSensor)==HIGH)
+  {
+    digitalWrite(Buzzer,HIGH);
+    digitalWrite(RedLED,HIGH);
+    delay(100);
+    }else{
+    digitalWrite(Buzzer,LOW);
+    digitalWrite(RedLED,LOW);
+    }
+delay(200);
+}
